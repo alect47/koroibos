@@ -9,7 +9,10 @@ const fetch = require('node-fetch');
 
 async function allOlympians() {
   try {
-    let response = await database('olympians').select()
+    let response = await database('olympians')
+      .select('name', 'team', 'age', 'sport')
+      .groupBy('name', 'team', 'age', 'sport')
+      .count('medal as total_medals_won')
     return response;
   } catch(err) {
     return err;
@@ -28,3 +31,5 @@ router.get('/', (request, response) => {
       }
     })
   });
+
+  module.exports = router;
