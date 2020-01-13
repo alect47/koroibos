@@ -23,7 +23,8 @@ router.get('/', (request, response) => {
   allOlympians()
     .then(olympians => {
       if (olympians.length) {
-        response.status(200).send(olympians)
+        var data = {olympians: olympians}
+        response.status(200).send(data)
       } else {
         response.status(404).json({
           error: `No olympians found`
