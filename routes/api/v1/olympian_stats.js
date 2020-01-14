@@ -6,21 +6,13 @@ const configuration = require('../../../knexfile')[environment];
 const database = require('knex')(configuration);
 const fetch = require('node-fetch');
 
-
-async function allOlympians() {
-  try {
-    let response = await database('olympians')
-      .select('name', 'team', 'age', 'sport')
-      .groupBy('name', 'team', 'age', 'sport')
-      .count('medal as total_medals_won')
-    return response;
-  } catch(err) {
-    return err;
-  }
-}
+const OlympianStats = require('../../../models/olympian_stats')
+// const olympianData = OlympianStats.makeStats()
 
 router.get('/', async function (request, response) {
-  await allOlympians()
+  let olympianStatsModel = await new OlympianStats()
+  await olympianStatsModel.makeStats()
+  // console.log(olympianStatsModel)
   .then((data) => {
     response.status(200).json(data);
   })
