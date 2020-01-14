@@ -19,8 +19,37 @@ async function allOlympians() {
   }
 }
 
+async function oldestOlympian() {
+  try {
+    let response = await database('olympians')
+      .select('name', 'team', 'age', 'sport')
+      .groupBy('name', 'team', 'age', 'sport')
+      .count('medal as total_medals_won')
+      .orderBy('age', 'desc')
+      .first()
+
+    return response;
+  } catch(err) {
+    return err;
+  }
+}
+
 router.get('/', (request, response) => {
-  allOlympians()
+  if(request.query.age === 'oldest') {
+    oldestOlympian()
+      .then(olympians => {
+        if (olympians) {
+          var data = [olympians]
+          response.status(200).send({data})
+        } else {
+          response.status(404).json({
+            error: `No olympians found`
+          });
+        }
+      })
+  }
+  else {
+    allOlympians()
     .then(olympians => {
       if (olympians.length) {
         var data = {olympians: olympians}
@@ -31,6 +60,7 @@ router.get('/', (request, response) => {
         });
       }
     })
+  }
   });
 
   module.exports = router;
