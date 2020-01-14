@@ -44,6 +44,13 @@ describe('Test GET api/v1/olympians', () => {
       expect(res.body.olympians[2]).toHaveProperty('total_medals_won')
       expect(res.body.olympians[2].total_medals_won).toBe('1')
     })
+      it('should generate error message for sad path', async() => {
+      await database('olympians').delete()
+      const res = await request(app).get("/api/v1/olympians")
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body.error).toBe("No olympians found")
+    })
 
     it('should get oldest olympian', async() => {
 
@@ -66,8 +73,43 @@ describe('Test GET api/v1/olympians', () => {
 
       expect(res.body.data[0]).toHaveProperty('total_medals_won')
       expect(res.body.data[0].total_medals_won).toBe('1')
-
-
-
     })
+      it('should generate error message for sad path', async() => {
+      await database('olympians').delete()
+      const res = await request(app).get("/api/v1/olympians?age=oldest")
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body.error).toBe("No olympians found")
+    })
+
+    it('should get youngest olympian', async() => {
+
+      const res = await request(app).get("/api/v1/olympians?age=youngest")
+
+      expect(res.statusCode).toBe(200)
+
+      expect(res.body.data[0]).toHaveProperty('name')
+      expect(res.body.data[0].name).toBe("You")
+
+      expect(res.body.data[0]).toHaveProperty('age')
+      expect(res.body.data[0].age).toBe(1)
+
+      expect(res.body.data[0]).toHaveProperty('team')
+      expect(res.body.data[0].team).toBe("Australia")
+
+
+      expect(res.body.data[0]).toHaveProperty('sport')
+      expect(res.body.data[0].sport).toBe("Running")
+
+      expect(res.body.data[0]).toHaveProperty('total_medals_won')
+      expect(res.body.data[0].total_medals_won).toBe('1')
+    })
+
+    it('should generate error message for sad path', async() => {
+    await database('olympians').delete()
+    const res = await request(app).get("/api/v1/olympians?age=youngest")
+
+    expect(res.statusCode).toBe(404)
+    expect(res.body.error).toBe("No olympians found")
+  })
 });
