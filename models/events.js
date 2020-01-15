@@ -16,6 +16,18 @@ class Events {
     return eventData
   }
 
+  async getmedals(id) {
+    let data = {}
+    let sportData = await database('events').where('id', id).select('event')
+
+    console.log(sportData[0].event)
+    let medalists = await database('olympians').where('event', sportData[0].event)
+                        .whereNotNull('medal').select('name', 'team', 'age', 'medal')
+    data["event"] = await sportData[0]['event']
+    data["medalists"] = await medalists
+    return data
+  }
+
 }
 
 module.exports = Events;
