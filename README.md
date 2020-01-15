@@ -209,9 +209,3 @@ In Postman, append the url to expose the below endpoints or click the `Run in Po
 }
 ```
 
-## Database Schema
-
-<a name="db-schema"/>
-
-![db_diagram.png](./db/schema_diagram/db_diagram.png)
-
