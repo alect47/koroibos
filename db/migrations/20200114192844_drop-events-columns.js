@@ -9,6 +9,8 @@ exports.up = function(knex) {
       table.dropColumn('team');
       table.dropColumn('games');
       table.dropColumn('medal');
+      table.dropColumn('created_at');
+      table.dropColumn('updated_at');
 
     })
   ])
