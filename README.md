@@ -1,37 +1,58 @@
-# All your Express base are belong to us
+# Koroibos
 
-[![Build Status](https://travis-ci.com/turingschool-examples/all-your-base.svg?branch=master)](https://travis-ci.com/turingschool-examples/all-your-base)
+#### Contributors:
+* [Alec Wells](https://github.com/alect47)
 
-## Getting started
-To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
+A solo project completed in 2 days during Module 4 of Backend Engineering at Turing School of Software and Design.
 
-#### Installing necessary dependencies
-The easiest way to get started is to run the following command. This will pull down any necessary dependencies that your app will require. You can think of this command as something incredibly similar to `bundle install` in Rails. 
+This Express api uses olympic data to exposes endpoints that return olympians data as well as events data.  The data format adheres to project specs provided by our instructors for each sprint.
 
-`npm install`
+## Areas of focus:
+* Create an Express API given specified endpoints and response formats
+* Testing using Jest, with coverage at or above 95%
+* Project management using [GitHub Projects](https://github.com/alect47/koroibos/projects)
+* Advanced git workflow using development, staging and production environments
+* Agile workflow - building project in sprints, writing detailed user stories
+* Deploying to staging and production environments each feature only after it was fully tested and functional in development.
 
-#### Set up your local database
-You’ll need to figure out a name for your database. We suggest calling it something like `sweater_weather_dev`.  
+## Tech Stack
 
-To get things set up, you’ll need to access your Postgres instance by typing in `psql` into your terminal. Once there, you can create your database by running the comment `CREATE DATABASE PUT_DATABASE_NAME_HERE_dev;`. 
+* [Express for Node.js](https://expressjs.com/)
+* [JavaScript](https://devdocs.io/javascript/)
+* [Jest](https://jestjs.io/)
+* [Knex.js](http://knexjs.org/)
+* [PostgreSQL](https://www.postgresql.org/)
 
-Now you have a database for your new project.
+## Local Setup
 
-#### Migrations
-Once you have your database setup, you’ll need to run some migrations (if you have any). You can do this by running the following command: 
+Before cloning the repository:
+* Download [Postman](https://www.getpostman.com/)
 
-`knex migrate:latest`
-
-
-Instructions to create database, run migrations, and seed: 
+To get set up:
+* `git clone git@github.com:alect47/koroibos.git`
+* `npm install` to install necessary dependencies
+* Install all dependences by navigating to the root directory in your terminal and running npm install
+* Run psql in your terminal and run CREATE DATABASE olympians_dev; to create your PostgreSQL database
+* Run the following command in psql to import the Olympians' data into the database
 ```
 psql
-CREATE DATABASE DATABASE_NAME_dev;
-\q
+\c olympians_dev
+copy olympians (name, sex, age, height, weight, team, games, sport, event, medal) FROM 'oly
+mpic_data_2016.csv' WITH (FORMAT CSV, DELIMITER',', null 'NA')
 
-knex migrate:latest
-knex seed:run
+
+\copy events (sport, event) FROM 'new_new_new_events.csv' WITH (FORMAT CSV, DELIMITER',', null 'NA');Run table migrations with
 ```
+
+To run the server: `npm start`
+* Local server: `http://localhost:3000`
+* Production site: `https://koroibos-final-alec.herokuapp.com/`
+
+#### Migrations
+Once you have your database setup, you’ll need to run some migrations. You can do this by running the following command:
+
+`knex migrate:latest` for development
+
 
 #### Set up your test database
 Most of the setup is going to be same as the one you did before. You’ll notice one small difference with setting the environment flag to `test`.  
@@ -40,35 +61,157 @@ Most of the setup is going to be same as the one you did before. You’ll notice
 psql
 CREATE DATABASE DATABASE_NAME_test;
 \q
-
-knex migrate:latest --env test
 ```
 
-## Running your tests
-Running tests are simple and require you to run the following command below: 
+`knex migrate:latest --env test`
+
+
+#### Running your tests
+Running tests are simple and require you to run the following command below:
 
 `npm test`
 
-When the tests have completed, you’ll get a read out of how things panned out. The tests will be a bit more noisy than what you’re used to, so be prepared. 
+When the tests have completed, you’ll get a read out of how things panned out.
 
-## Setting up your production environment
-This repo comes with a lot of things prepared for you. This includes production ready configuration. To get started, you’ll need to do a few things. 
+## Running in Postman
+In Postman, append the url to expose the below endpoints or click the `Run in Postman` button.
 
-- Start a brand new app on the Heroku dashboard 
-- Add a Postgres instance to your new Heroku app
-- Find the URL of that same Postgres instance and copy it. It should look like a long url. It may look something like like `postgres://sdflkjsdflksdf:9d3367042c8739f3...`.
-- Update your `knexfile.js` file to use your Heroku database instance. You’ll see a key of `connection` with a value of an empty string. This is where you’ll paste your new Postgres instance URL. 
 
-Once you’ve set all of that up, you’ll need to `add the remote` to your new app. This should work no differently than how you’ve done it with any Rails project. Adding this remote will allow you to run `git push heroku master`. 
+### Endpoints
 
-Once you’ve done that, you’ll need to `bash` into your Heroku instance and get some things set up. 
+* GET api/v1/olympians
 
-- Run the following commands to get started:
+* Expected Ressponse:
 ```
-heroku run bash
-npm install
-nom install -g knex
-knex migrate:latest
+{
+  "olympians":
+    [
+      {
+        "name": "Maha Abdalsalam",
+        "team": "Egypt",
+        "age": 18,
+        "sport": "Diving"
+        "total_medals_won": 0
+      },
+      {
+        "name": "Ahmad Abughaush",
+        "team": "Jordan",
+        "age": 20,
+        "sport": "Taekwondo"
+        "total_medals_won": 1
+      },
+      {...}
+    ]
+}
 ```
 
-This will install any dependencies, install Knex, and migrate any changes that you’ve made to the database. 
+* `GET api/v1/olympians?age=youngest`
+
+```javascript
+//Response Format
+{
+  [
+    {
+      "name": "Ana Iulia Dascl",
+      "team": "Romania",
+      "age": 13,
+      "sport": "Swimming"
+      "total_medals_won": 0
+    }
+  ]
+}
+```
+
+* `GET api/v1/olympians?age=oldest`
+
+```javascript
+//Response Format
+{
+  [
+    {
+      "name": "Julie Brougham",
+      "team": "New Zealand",
+      "age": 62,
+      "sport": "Equestrianism"
+      "total_medals_won": 0
+    }
+  ]
+}
+```
+
+* `GET api/v1/olympian_stats`
+
+```javascript
+  {
+    "olympian_stats": {
+      "total_competing_olympians": 3120
+      "average_weight:" {
+        "unit": "kg",
+        "male_olympians": 75.4,
+        "female_olympians": 70.2
+      }
+      "average_age:" 26.2
+    }
+  }
+```
+
+* `GET api/v1/events`
+
+```javascript
+//Response Format
+{
+  "events":
+    [
+      {
+        "sport": "Archery",
+        "events": [
+          "Archery Men's Individual",
+          "Archery Men's Team",
+          "Archery Women's Individual",
+          "Archery Women's Team"
+        ]
+      },
+      {
+        "sport": "Badminton",
+        "events": [
+          "Badminton Men's Doubles",
+          "Badminton Men's Singles",
+          "Badminton Women's Doubles",
+          "Badminton Women's Singles",
+          "Badminton Mixed Doubles"
+        ]
+      },
+      {...}
+    ]
+}
+```
+
+* `GET api/v1/events/:id/medalists`
+
+```javascript
+//Response Format
+{
+  "event": "Badminton Mixed Doubles",
+  "medalists": [
+      {
+        "name": "Tontowi Ahmad",
+        "team": "Indonesia-1",
+        "age": 29,
+        "medal": "Gold"
+      },
+      {
+        "name": "Chan Peng Soon",
+        "team": "Malaysia",
+        "age": 28,
+        "medal": "Silver"
+      }
+    ]
+}
+```
+
+## Database Schema
+
+<a name="db-schema"/>
+
+![db_diagram.png](./db/schema_diagram/db_diagram.png)
+
